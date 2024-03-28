@@ -1,6 +1,7 @@
 ---
 title: "MS5130 Assignment_3"
 author: "Vartika Srivastava"
+csl: "references_1/csl_1/apa-old-doi-prefix.csl"
 format:
   html:
     code-fold: true
