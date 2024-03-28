@@ -1,0 +1,12 @@
+---
+title: "MS5130 Assignment_3"
+author: "Vartika Srivastava"
+format:
+  html:
+    code-fold: true
+    embed-resources: true
+---
+
+# Introduction to Assignment3
+
+x+y=3
