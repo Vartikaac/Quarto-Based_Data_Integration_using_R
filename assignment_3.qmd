@@ -4,10 +4,245 @@ author: "Vartika Srivastava"
 csl: "references_1/csl_1/apa-old-doi-prefix.csl"
 format:
   html:
-    code-fold: true
     embed-resources: true
+    toc: true
+    toc-expand: 2
+    toc-title: Contents
+    toc-depth: 3
 ---
 
-# Introduction to Assignment3
+# Welcome to Assignment 3 for MS5130: Advanced Analysis with R {style="color: black;"}
 
-x+y=3
+[***In this assignment, I will be showcasing my proficiency and the insights I've gained through my coursework in R programming. We will delve into complex statistical concepts, applying them to real-world data sets to demonstrate the power and versatility of R in solving analytical challenges. Join me as we explore the intricacies of data manipulation, visualization, and statistical modeling, highlighting the critical role of R in data science and statistical analysis***]{style="color: orange;"}
+
+::: {.callout-note style="color: #555554;"}
+# **Enhancements used in my Assignment are displayed below**📢
+
+-   **(BE1) Executing the R code inside Quarto**
+
+-   **(BE2) Use multiple datasets**
+
+-   **(BE3) Combine datasets together**
+
+-   **(BE4) Synergy of quantitative and qualitative analysis**
+
+-   **(BE5) Explanatory text:**
+
+-   **(SE1) Depict your data streams using Mermaid**
+
+-   **(SE2) Use of a private GitHub repository**
+
+-   **(SE3) Use of geographical data analysis using Leaflet**
+
+-   **(SE4) Use of interactive charts/graphs/plots**
+:::
+
+## Selecting and Combining Datasets
+
+The datasets mentioned are: the `amazon sale report`, which is a dataset from an earlier assignment (assignment1), and 2 new datasets I took for this assignment `Product_dataset` and `amazon_products`,
+
+The code begins by loading three CSV files: '**Amazon Sale Report.csv**', '**Products.csv**', and '**Amazon-Products.csv**'. This is done using the read.csv function, with parameters set to ensure that the header row is recognized and string data is not automatically converted into factors.
+
+For combining the datasets ,The inner_join function from the dplyr package is used to merge datasets based on common columns. This is a powerful feature for enhancing the analysis **(BE2)** because it allows for the integration of data from multiple sources showcasing **(BE3)** Combine datasets together, providing a more comprehensive view of the information.
+
+First, Product_dataset is combined with amazon_sale_report using 'Category' as the key. This implies that the analysis is interested in exploring sales data within specific product categories. Then, the resulting dataset is further combined with amazon_products using 'index' as the key.
+
+Our Final Dataset is **combined_Product_sale**
+
+```{r message=FALSE, warning=FALSE }
+#Load libraries
+library(readr)
+library(dplyr)
+
+# Load the datasets
+amazon_sale_report <- read.csv('Amazon Sale Report.csv', header = TRUE , stringsAsFactors = FALSE)
+Product_dataset <- read.csv('Products.csv', header = TRUE , stringsAsFactors = FALSE)
+amazon_products <- read.csv('Amazon-Products.csv', header = TRUE , stringsAsFactors = FALSE)
+
+# Combine test_dataset and amazon_sale_report on 'Category'
+
+combined_Product_sale <- inner_join(Product_dataset, amazon_sale_report, by = "Category")
+
+combined_sale_products <- inner_join(combined_Product_sale, amazon_products, by = "index")
+
+#View the dataset
+head(combined_sale_products)
+
+
+```
+
+::: {.callout-note collapse="true"}
+Enhancements Used: BE1, BE2, BE3, BE5
+:::
+
+## Quantitative Analysis
+
+### GLM MODEL
+
+The code begins by importing the stats library, which is part of R's base packages and provides a broad array of statistical functions, including those needed for performing generalized linear models (GLM).
+
+The pre-processing step involves converting the 'Status' variable into a binary format, where the status "Cancelled" is represented as 1, and all other statuses are represented as 0.
+
+A GLM is then fitted to the pre-processed data, with the binary 'Cancelled' variable as the response and the numerical variables 'Amount' and 'Qty' (quantity) as predictors.
+
+The glm function is used with the family = binomial argument, specifying that a logistic regression model is to be fitted. This type of model is chosen because the response variable is binary, and the goal is to understand how changes in the amount and quantity of orders relate to the likelihood of an order being cancelled.
+
+This analysis demonstrates **(BE4)**
+
+```{r message=FALSE, warning=FALSE}
+#import libraries
+library(stats)
+
+# Preprocess the data
+# Convert the Status to a binary variable (1 for Cancelled, 0 otherwise)
+
+combined_sale_products<- combined_sale_products %>%mutate(Cancelled = if_else(Status == "Cancelled", 1, 0))
+
+# Fit a GLM 
+glm_model <- glm(Cancelled ~ Amount + Qty, data = combined_sale_products, family = binomial)
+
+# Summary of the model
+summary(glm_model)
+
+
+```
+
+### Poisson GLM Model
+
+Switching gears to a Poisson generalized linear model (GLM) **demonstrating (SE5)**. This section of analysis aims to explore the relationship between the quantity of products ordered and the amount of those orders (Amount) using a Poisson regression model.
+
+The Poisson GLM is particularly suited for modeling count data, where the response variable represents counts or numbers of events (in this case, the quantity of products ordered i.e. Amount)
+
+```{r message=FALSE, warning=FALSE}
+# Assuming Qty is  count response and Amount is a predictor
+
+# Fit a Poisson GLM 
+poisson_model <- glm(Qty ~ Amount, data = combined_sale_products, family = poisson())
+
+# Summary of the model
+summary(poisson_model)
+```
+
+### Gaussian GLM model
+
+In this stage of analysis where I am demonstrating **(SE5)**, focus on modeling the relationship between the order amount (Amount), the quantity of products ordered (Qty), and the order status (Status) using a Gaussian generalized linear model (GLM).
+
+Before fitting the model, I ensured that the Status variable is treated as a categorical factor by converting it with as.factor(). This is crucial because Status likely represents different categories of order statuses , and treating it as a factor allows the model to appropriately handle it as a nominal variable with discrete levels, rather than as a numeric variable. This model is aiming to predict the order amount based on the quantity of products ordered and the status of the order.
+
+```{r message=FALSE, warning=FALSE}
+
+# Convert Status to a factor if it's not already
+combined_sale_products$Status <- as.factor(combined_sale_products$Status)
+
+# Fit a Gaussian GLM 
+gaussian_model <- glm(Amount ~ Qty + Status, data = combined_sale_products, family = gaussian())
+
+# Summary of the model
+summary(gaussian_model)
+```
+
+### Compare the Akaike Information Criterion (AIC) values for three different generalized linear models (GLMs) — Binomial, Poisson, and Gaussian
+
+AIC is a measure of the relative quality of statistical models for a given set of data. Lower AIC values generally indicate a model that better fits the data
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+#Comparing models using AIC
+aic_values <- data.frame(
+  Model = c("Binomial", "Poisson", "Gaussian"),
+  AIC = c(AIC(glm_model), AIC(poisson_model), AIC(gaussian_model))
+)
+
+# Plotting
+ggplot(aic_values, aes(x = Model, y = AIC, fill = Model)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Model AIC Comparison") +
+  theme_minimal()
+```
+
+| The bar plot displays a comparison of the Akaike Information Criterion (AIC) values for three different generalized linear models: Binomial, Poisson, and Gaussian. Considering these AIC values, you would typically favor the Binomial model for further analysis and predictive tasks.
+
+### Linear Regression Model
+
+In the below code we are performing a Linear Regression Model to understand the impact of fulfillment status and the number of reviews on product ratings .
+
+The initial steps involve preparing combined_sale_products dataset for analysis. This includes filtering out rows with missing values in specific columns (Rating, fulfilled1, and noreviews1) and converting fulfilled1 into a factor .
+
+This interaction allows for examining how the relationship between the number of reviews (noreviews1) and the rating (Rating) changes based on the fulfillment status (fulfilled1).
+
+This analysis demonstrates **(BE4)**
+
+```{r message=FALSE, warning=FALSE}
+
+
+# Proceed with data cleaning and model creation
+# Filter out rows with missing values in these columns and convert 'fulfilled1' to a factor
+dataset_clean <- combined_sale_products %>%
+  filter(!is.na(Rating), !is.na(fulfilled1), !is.na(noreviews1)) %>%
+  mutate(fulfilled1 = as.factor(fulfilled1)) # Convert to factor for the interaction term
+
+# Create a linear regression model with an interaction between fulfilled1 and noreviews1
+model <- lm(Rating ~ fulfilled1 * noreviews1, data = combined_sale_products)
+
+# Summary of the model
+summary(model)
+
+# Creating the interaction plot with ggplot2
+ggplot(dataset_clean, aes(x = noreviews1, y = Rating, color = as.factor(fulfilled1))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, aes(group = fulfilled1)) + # Ensure group aesthetic uses the factor
+  scale_color_manual(values = c("blue", "red")) + # Manually specify colors for the factor levels
+  labs(title = "Interaction Effect of Fulfillment and Number of Reviews on Rating",
+       x = "Number of Reviews",
+       y = "Rating",
+       color = "Fulfilled by Platform") +
+  theme_minimal() # Use a minimal theme for the plot
+```
+
+The plot depicts a flat, parallel trend between the number of reviews and product ratings for both platform-fulfilled and otherwise, suggesting that review volume has a negligible effect on ratings. Ratings cluster at the high end, indicating a general customer satisfaction or rating scale bias. The similarity in trends regardless of fulfillment status implies that how a product is fulfilled does not significantly influence its ratings.
+
+::: {.callout-note collapse="true"}
+Enhancements Used in Quantitative Analysis: BE1, BE4, BE5 ,SE5
+:::
+
+## Qualitative Analysis
+
+### Text Mining
+
+The code snippet demonstrates the use of text mining techniques in R to process and visualize text data from a column, presumed to be 'ship-state', in the combined_sale_products dataset.
+
+The text mining process here focuses on extracting insights from the 'ship-state' column, which contains text data related to shipping locations. By normalizing and preprocessing the text data, I remove irrelevant characters and standardize the text, ensuring that variations in formatting do not skew the analysis.
+
+The resultant word cloud will be a visual representation of the frequency of each state within the data; the size of each word in the cloud corresponds to its frequency or importance in the corpus. It is a popular way to highlight the most prominent elements in textual data, providing an immediate visual summary of the text's content.
+
+```{r message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(tm)
+library(wordcloud)
+library(ggplot2)
+
+
+# Assuming 'ship-state' is the column of interest
+# Convert to lowercase for consistency
+combined_sale_products$ship.state <- tolower(combined_sale_products$ship.state)
+
+# Create a text corpus
+corpus <- Corpus(VectorSource(combined_sale_products$ship.state))
+
+# Optional: preprocess the text
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, stripWhitespace)
+
+# Generate the word cloud
+wordcloud(corpus, max.words = 100, random.order = FALSE, rot.per = 0.35, colors=brewer.pal(8, "Dark2"))
+```
+
+The word cloud provides a visual representation of shipping locations from the dataset, with the size of each word reflecting its frequency. Larger words like "maharashtra," "uttarpradesh," and "telangana" indicate these states are common in the shipping . Smaller words represent less frequently occurring states. This visual summary quickly communicates which regions has maximum shipping and which regions has minimum shipping
+
+::: {.callout-note collapse="true"}
+Enhancements Used in Qualitative Analysis: BE1, BE4, BE5
+:::
