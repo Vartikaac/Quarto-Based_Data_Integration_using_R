@@ -55,9 +55,9 @@ library(readr)
 library(dplyr)
 
 # Load the datasets
-amazon_sale_report <- read.csv('Amazon Sale Report.csv', header = TRUE , stringsAsFactors = FALSE)
-Product_dataset <- read.csv('Products.csv', header = TRUE , stringsAsFactors = FALSE)
-amazon_products <- read.csv('Amazon-Products.csv', header = TRUE , stringsAsFactors = FALSE)
+amazon_sale_report <- read.csv("dataset/Amazon Sale Report.csv", header = TRUE , stringsAsFactors = FALSE)
+Product_dataset <- read.csv('dataset/Products.csv', header = TRUE , stringsAsFactors = FALSE)
+amazon_products <- read.csv('dataset/Amazon-Products.csv', header = TRUE , stringsAsFactors = FALSE)
 
 # Combine test_dataset and amazon_sale_report on 'Category'
 
