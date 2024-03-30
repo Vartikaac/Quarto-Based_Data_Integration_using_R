@@ -86,7 +86,7 @@ The pre-processing step involves converting the 'Status' variable into a binary 
 A GLM is then fitted to the pre-processed data, with the binary 'Cancelled' variable as the response and the numerical variables 'Amount' and 'Qty' (quantity) as predictors.
 
 The glm function is used with the family = binomial argument, specifying that a logistic regression model is to be fitted. This type of model is chosen because the response variable is binary, and the goal is to understand how changes in the amount and quantity of orders relate to the likelihood of an order being cancelled.
-
+ \
 This analysis demonstrates **(BE4)**
 
 ```{r message=FALSE, warning=FALSE}
@@ -170,7 +170,7 @@ In the below code we are performing a Linear Regression Model to understand the 
 The initial steps involve preparing combined_sale_products dataset for analysis. This includes filtering out rows with missing values in specific columns (Rating, fulfilled1, and noreviews1) and converting fulfilled1 into a factor .
 
 This interaction allows for examining how the relationship between the number of reviews (noreviews1) and the rating (Rating) changes based on the fulfillment status (fulfilled1).
-
+ \
 This analysis demonstrates **(BE4)**
 
 ```{r message=FALSE, warning=FALSE}
@@ -210,9 +210,9 @@ Enhancements Used in Quantitative Analysis: BE1, BE4, BE5 ,SE5
 
 ### Text Mining
 
-The code snippet demonstrates the use of text mining techniques in R to process and visualize text data from a column, presumed to be 'ship-state', in the combined_sale_products dataset.
+The code snippet demonstrates the use of text mining techniques in R by demonstrating **(BE4)** to process and visualize text data from a column, presumed to be 'ship-state', in the combined_sale_products dataset.
 
-The text mining process here focuses on extracting insights from the 'ship-state' column, which contains text data related to shipping locations. By normalizing and preprocessing the text data, I remove irrelevant characters and standardize the text, ensuring that variations in formatting do not skew the analysis.
+The text mining process here focuses on extracting insights from the 'ship-state' column, which contains text data related to shipping locations. By normalizing and pre-processing the text data, I remove irrelevant characters and standardize the text, ensuring that variations in formatting do not skew the analysis.
 
 The resultant word cloud will be a visual representation of the frequency of each state within the data; the size of each word in the cloud corresponds to its frequency or importance in the corpus. It is a popular way to highlight the most prominent elements in textual data, providing an immediate visual summary of the text's content.
 
