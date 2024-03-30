@@ -225,7 +225,7 @@ library(ggplot2)
 
 
 # Assuming 'ship-state' is the column of interest
-# Convert to lowercase for consistency
+# Convert to lowercase for its consistency
 combined_sale_products$ship.state <- tolower(combined_sale_products$ship.state)
 
 # Create a text corpus
@@ -245,4 +245,91 @@ The word cloud provides a visual representation of shipping locations from the d
 
 ::: {.callout-note collapse="true"}
 Enhancements Used in Qualitative Analysis: BE1, BE4, BE5
+:::
+
+## Flow Diagram
+
+> This Diagram outlines a detailed process involving loading datasets, combining them, pre-processing, fitting different models, comparing those models, and generating various plots for analysis.
+
+```{mermaid}
+flowchart TB
+    load_datasets{Load Datasets} -->|read.csv| dataset1[Amazon Sale Report]
+    load_datasets -->|read.csv| dataset2[Products]
+    load_datasets -->|read.csv| dataset3[Amazon Products]
+    dataset1 --> merge1[Combine Datasets]
+    dataset2 --> merge1
+    dataset3 --> merge1
+    merge1 --> preprocess{Preprocess Data}
+    preprocess -->|mutate| status_bin[Convert Status to Binary]
+    status_bin --> fit_models{Fit Models}
+    fit_models --> glm_model[GLM Binomial]
+    fit_models --> poisson_model[Poisson GLM]
+    fit_models --> gaussian_model[Gaussian GLM]
+    glm_model --> compare{Compare Models}
+    poisson_model --> compare
+    gaussian_model --> compare
+    compare -->|ggplot| aic_plot[AIC Comparison]
+    preprocess -->|filter & mutate| clean_dataset[Clean Dataset for Additional Analysis]
+    clean_dataset --> lm_model[Linear Regression Model]
+    lm_model -->|ggplot| interaction_plot[Interaction Effect Plot]
+    preprocess -->|aggregate| sales_over_time[Aggregate Sales Over Time]
+    sales_over_time -->|plotly| sales_plot[Total Sales Over Time Plot]
+    preprocess -->|gsub & as.numeric| ratings_hist[Convert Ratings to Numeric]
+    ratings_hist -->|plotly| ratings_distribution[Histogram of Ratings Distribution]
+    load_datasets -->|leaflet| map_visualization[Map Visualization]
+    load_datasets -->|tm & wordcloud| word_cloud[Generate Word Cloud]
+   
+```
+
+::: {.callout-note collapse="true"}
+Enhancements Used: BE1, BE5, SE1
+:::
+
+## Shipping Destinations by State: An Overview of Indian Logistics
+
+```{r message=FALSE, warning=FALSE}
+library(leaflet)
+library(dplyr)
+
+# Define the states and their coordinates
+states_coords <- data.frame(
+  name = c("Andaman & Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", 
+           "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli", "Delhi", 
+           "Gujarat", "Haryana", "Himachal Pradesh", "Jammu & Kashmir", "Jharkhand", 
+           "Karnataka", "Kerala", "Ladakh", "Madhya Pradesh", "Maharashtra", "Manipur", 
+           "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", 
+           "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", 
+           "Uttarakhand", "West Bengal"),
+  latitude = c(11.667025, 15.9129, 28.2180, 26.2006, 25.0961, 30.7333, 21.2787, 20.1809, 
+               28.7041, 22.2587, 29.0588, 31.1048, 33.7782, 23.6102, 15.3173, 10.8505, 
+               34.1526, 22.9734, 19.7515, 24.6637, 25.4670, 23.1645, 26.1584, 20.9517, 
+               11.9416, 31.1471, 27.0238, 27.5330, 11.1271, 18.1124, 23.9408, 26.8467, 
+               30.0668, 22.9868),
+  longitude = c(92.735983, 79.7400, 94.7278, 92.9376, 85.3131, 76.7794, 81.8661, 73.0169, 
+                77.1025, 71.1924, 76.0856, 77.1734, 76.5762, 85.2799, 75.7139, 76.2711, 
+                77.5770, 78.6569, 75.7139, 93.9063, 91.3662, 92.9376, 94.5624, 85.0985, 
+                79.8083, 75.3412, 74.2179, 88.5122, 78.6569, 79.0193, 91.9882, 80.9462, 
+                79.0193, 87.8550)
+)
+
+# Initialize a Leaflet map
+map <- leaflet() %>%
+  addProviderTiles(providers$OpenStreetMap) %>%  # Add base map tiles
+  setView(lng = 78.9629, lat = 20.5937, zoom = 5)  # Center the map on India
+
+# Add markers for each state
+for(i in 1:nrow(states_coords)) {
+  map <- map %>%
+    addMarkers(lng = states_coords$longitude[i], lat = states_coords$latitude[i],
+               popup = states_coords$name[i])
+}
+
+# Display the map
+map
+```
+
+The map illustrates the various shipping destinations across India
+
+::: {.callout-note collapse="true"}
+Enhancements Used: BE1, BE5, SE3
 :::
