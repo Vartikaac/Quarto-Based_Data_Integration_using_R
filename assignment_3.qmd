@@ -85,8 +85,7 @@ The pre-processing step involves converting the 'Status' variable into a binary 
 
 A GLM is then fitted to the pre-processed data, with the binary 'Cancelled' variable as the response and the numerical variables 'Amount' and 'Qty' (quantity) as predictors.
 
-The glm function is used with the family = binomial argument, specifying that a logistic regression model is to be fitted. This type of model is chosen because the response variable is binary, and the goal is to understand how changes in the amount and quantity of orders relate to the likelihood of an order being cancelled.
- \
+The glm function is used with the family = binomial argument, specifying that a logistic regression model is to be fitted. This type of model is chosen because the response variable is binary, and the goal is to understand how changes in the amount and quantity of orders relate to the likelihood of an order being cancelled.  \
 This analysis demonstrates **(BE4)**
 
 ```{r message=FALSE, warning=FALSE}
@@ -169,8 +168,7 @@ In the below code we are performing a Linear Regression Model to understand the 
 
 The initial steps involve preparing combined_sale_products dataset for analysis. This includes filtering out rows with missing values in specific columns (Rating, fulfilled1, and noreviews1) and converting fulfilled1 into a factor .
 
-This interaction allows for examining how the relationship between the number of reviews (noreviews1) and the rating (Rating) changes based on the fulfillment status (fulfilled1).
- \
+This interaction allows for examining how the relationship between the number of reviews (noreviews1) and the rating (Rating) changes based on the fulfillment status (fulfilled1).  \
 This analysis demonstrates **(BE4)**
 
 ```{r message=FALSE, warning=FALSE}
@@ -332,4 +330,61 @@ The map illustrates the various shipping destinations across India
 
 ::: {.callout-note collapse="true"}
 Enhancements Used: BE1, BE5, SE3
+:::
+
+## Interative Graphs/Plots
+
+### Graph 1
+
+The code transforms a 'Date' column to the appropriate Date format and aggregates sales data by date to analyze trends over time. It then leverages plotly to create an interactive line chart.
+
+```{r message=FALSE, warning=FALSE}
+
+library(readr)
+library(dplyr)
+library(plotly)
+
+# Convert Date column to Date type
+combined_sale_products$Date <- as.Date(combined_sale_products$Date, format = "%m/%d/%Y")
+
+# Aggregate sales by date
+sales_over_time <- combined_sale_products %>%
+  group_by(Date) %>%
+  summarise(TotalSales = sum(Amount, na.rm = TRUE))
+
+# 'sales_over_time' is the data frame with Date and TotalSales columns
+plot <- plot_ly(data = sales_over_time, x = ~Date, y = ~TotalSales, type = 'scatter', mode = 'lines+markers') %>%
+  layout(title = 'Total Sales Over Time',
+         xaxis = list(title = 'Date'),
+         yaxis = list(title = 'Total Sales (INR)'))
+
+# Print the plot
+plot
+
+```
+
+The graph depicts daily sales totals over time which can further help business analysis and decision-making based on sales patterns..
+
+### Graph 2
+
+The code helps to convert the colomn 'ratings' data by stripping out commas and non-numeric characters, then converts the cleansed strings to numeric values, readying them for analysis. Using Plotly, an interactive histogram is created to display the distribution of product ratings.
+
+```{r}
+# Convert ratings to numeric (after replacing commas and removing non-numeric characters)
+combined_sale_products$ratings <- as.numeric(gsub(",", "", gsub("[^0-9.]", "", combined_sale_products$ratings)))
+
+# Interactive Histogram of Ratings Distribution
+plot <- plot_ly(data = amazon_products, x = ~ratings, type = "histogram") %>%
+  layout(title = 'Distribution of Product Ratings',
+         xaxis = list(title = 'Ratings'),
+         yaxis = list(title = 'Count'))
+
+# Print the plot
+plot
+```
+
+This histogram allows for an intuitive exploration of the ratings' frequency, showing how often each rating occurs within the dataset. This visualization helps in understanding customer satisfaction levels
+
+::: {.callout-note collapse="true"}
+Enhancements Used : BE1, BE5, SE4
 :::
