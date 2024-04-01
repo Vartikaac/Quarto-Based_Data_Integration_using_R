@@ -59,7 +59,7 @@ amazon_sale_report <- read.csv("dataset/Amazon Sale Report.csv", header = TRUE ,
 Product_dataset <- read.csv('dataset/Products.csv', header = TRUE , stringsAsFactors = FALSE)
 amazon_products <- read.csv('dataset/Amazon-Products.csv', header = TRUE , stringsAsFactors = FALSE)
 
-# Combine test_dataset and amazon_sale_report on 'Category'
+# Combine datasets
 
 combined_Product_sale <- inner_join(Product_dataset, amazon_sale_report, by = "Category")
 
@@ -77,7 +77,7 @@ Enhancements Used: BE1, BE2, BE3, BE5
 
 ## Quantitative Analysis
 
-### GLM MODEL
+### Generalized Linear Model
 
 The code begins by importing the stats library, which is part of R's base packages and provides a broad array of statistical functions, including those needed for performing generalized linear models (GLM).
 
@@ -106,13 +106,14 @@ summary(glm_model)
 
 ```
 
-### Poisson GLM Model
+### Poisson GLM 
 
 Switching gears to a Poisson generalized linear model (GLM) **demonstrating (SE5)**. This section of analysis aims to explore the relationship between the quantity of products ordered and the amount of those orders (Amount) using a Poisson regression model.
 
 The Poisson GLM is particularly suited for modeling count data, where the response variable represents counts or numbers of events (in this case, the quantity of products ordered i.e. Amount)
 
 ```{r message=FALSE, warning=FALSE}
+
 # Assuming Qty is  count response and Amount is a predictor
 
 # Fit a Poisson GLM 
@@ -122,7 +123,7 @@ poisson_model <- glm(Qty ~ Amount, data = combined_sale_products, family = poiss
 summary(poisson_model)
 ```
 
-### Gaussian GLM model
+### Gaussian GLM 
 
 In this stage of analysis where I am demonstrating **(SE5)**, focus on modeling the relationship between the order amount (Amount), the quantity of products ordered (Qty), and the order status (Status) using a Gaussian generalized linear model (GLM).
 
@@ -153,7 +154,7 @@ aic_values <- data.frame(
   AIC = c(AIC(glm_model), AIC(poisson_model), AIC(gaussian_model))
 )
 
-# Plotting
+# Plotting visualisation
 ggplot(aic_values, aes(x = Model, y = AIC, fill = Model)) +
   geom_bar(stat = "identity") +
   labs(title = "Model AIC Comparison") +
@@ -189,13 +190,13 @@ summary(model)
 # Creating the interaction plot with ggplot2
 ggplot(dataset_clean, aes(x = noreviews1, y = Rating, color = as.factor(fulfilled1))) +
   geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = FALSE, aes(group = fulfilled1)) + # Ensure group aesthetic uses the factor
+  geom_smooth(method = "lm", se = FALSE, aes(group = fulfilled1)) + # Ensuring group aesthetic uses the factor
   scale_color_manual(values = c("blue", "red")) + # Manually specify colors for the factor levels
   labs(title = "Interaction Effect of Fulfillment and Number of Reviews on Rating",
        x = "Number of Reviews",
        y = "Rating",
        color = "Fulfilled by Platform") +
-  theme_minimal() # Use a minimal theme for the plot
+  theme_minimal() 
 ```
 
 The plot depicts a flat, parallel trend between the number of reviews and product ratings for both platform-fulfilled and otherwise, suggesting that review volume has a negligible effect on ratings. Ratings cluster at the high end, indicating a general customer satisfaction or rating scale bias. The similarity in trends regardless of fulfillment status implies that how a product is fulfilled does not significantly influence its ratings.
@@ -332,7 +333,7 @@ The map illustrates the various shipping destinations across India
 Enhancements Used: BE1, BE5, SE3
 :::
 
-## Interative Graphs/Plots
+## Interactive Graphs/Plots
 
 ### Graph 1
 
