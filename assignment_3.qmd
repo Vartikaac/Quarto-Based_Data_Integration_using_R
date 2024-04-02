@@ -223,7 +223,7 @@ library(wordcloud)
 library(ggplot2)
 
 
-# Assuming 'ship-state' is the column of interest
+#  'ship-state' is the column of interest
 # Convert to lowercase for its consistency
 combined_sale_products$ship.state <- tolower(combined_sale_products$ship.state)
 
