@@ -106,7 +106,7 @@ summary(glm_model)
 
 ```
 
-### Poisson GLM 
+### Poisson GLM
 
 Switching gears to a Poisson generalized linear model (GLM) **demonstrating (SE5)**. This section of analysis aims to explore the relationship between the quantity of products ordered and the amount of those orders (Amount) using a Poisson regression model.
 
@@ -123,7 +123,7 @@ poisson_model <- glm(Qty ~ Amount, data = combined_sale_products, family = poiss
 summary(poisson_model)
 ```
 
-### Gaussian GLM 
+### Gaussian GLM
 
 In this stage of analysis where I am demonstrating **(SE5)**, focus on modeling the relationship between the order amount (Amount), the quantity of products ordered (Qty), and the order status (Status) using a Gaussian generalized linear model (GLM).
 
@@ -388,4 +388,14 @@ This histogram allows for an intuitive exploration of the ratings' frequency, sh
 
 ::: {.callout-note collapse="true"}
 Enhancements Used : BE1, BE5, SE4
+:::
+
+## GitHub Link
+
+<https://github.com/Vartikaac/ms5130_R_assignment3>
+
+::: {.callout-note collapse="true"}
+Note: It is a private repository and access has been shared with Professor Blair wang 🤗.
+
+Enhancement Used : SE2
 :::
