@@ -1,3 +1,2 @@
-# ms5130_R_assignment3
-My name is Vartika srivastava , student id: 23101945
-In this assignment, I will be showcasing my proficiency and the insights I’ve gained through my coursework in R programming. We will delve into complex statistical concepts, applying them to real-world data sets to demonstrate the power and versatility of R in solving analytical challenges. Join me as we explore the intricacies of data manipulation, visualization, and statistical modeling, highlighting the critical role of R in data science and statistical analysis
+# Quarto-Based_Data_Integration_using_R
+This project explores comprehensive data analysis using Quarto to execute R code, merging multiple datasets, and integrating quantitative and qualitative analysis. The project demonstrates how to combine diverse data streams into a cohesive analysis , enhanced with interactive geographic visualizations and charts utilising line chart and histogram.
